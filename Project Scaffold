@@ -1,0 +1,21 @@
+dog-adoption-api/
+├─ controllers/
+│  ├─ auth.controller.js
+│  └─ dogs.controller.js
+├─ models/
+│  ├─ Dog.js
+│  └─ User.js
+├─ routes/
+│  ├─ auth.routes.js
+│  └─ dogs.routes.js
+├─ middlewares/
+│  ├─ auth.js
+│  └─ rateLimit.js
+├─ tests/
+│  ├─ auth.test.js
+│  └─ dogs.test.js
+├─ app.js
+├─ db.js
+├─ package.json
+├─ .env.example
+└─ README.md
