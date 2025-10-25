@@ -1,23 +1,42 @@
-import 'dotenv/config'; // Load environment variables from .env file
-import express from 'express';
-import cors from 'cors';
-import { connectDB } from ' ./db.js'; // Import the database connection function
-import dogRoutes from './routes/dogs.routes.js';
+import "dotenv/config"; // Load environment variables from .env
+import express from "express";
+import cors from "cors";
+import { connectDB } from "./db.js";
+import authRoutes from "./routes/auth.routes.js";
+import dogRoutes from "./routes/dogs.routes.js";
+
+// 🟢 --- DEBUG LOG: confirm app.js is loading ---
+console.log("🟢 app.js loaded, NODE_ENV =", process.env.NODE_ENV);
+
 const app = express();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use("/dogs, dogRoutes);")
+// Global middleware
+app.use(cors()); // Enable CORS
+app.use(express.json()); // Parse JSON bodies
 
-// Connect to the database
-connectDB();
+// Mount routes
+app.use("/auth", authRoutes); // /auth/register, /auth/login
+app.use("/dogs", dogRoutes);  // /dogs (protected)
 
-// Sample route
-app.get('/health', (req, res) => {
-    res.json({ status: 'OK' });
-});
+// Health check route
+app.get("/health", (req, res) => res.json({ status: "OK" }));
 
-    // Start the server
-    const PORT = process.env.PORT || 4000;
-    app.listen(PORT, () => console.log('Server running on port ${PORT}'));
+// 🟡 --- Database Connection ---
+console.log("➡️  Connecting to MongoDB...");
+connectDB()
+  .then(() => console.log("✅ connectDB() resolved"))
+  .catch(err => console.error("❌ connectDB() error:", err.message));
+
+// 🟣 --- Server Setup ---
+const PORT = process.env.PORT || 4000;
+
+// ✅ Only start the server if NOT in test mode
+if (process.env.NODE_ENV !== "test") {
+  console.log("➡️  Starting Express server on port", PORT);
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+} else {
+  console.log("🚫 Skipping app.listen() because NODE_ENV=test");
+}
+
+// ✅ Export app for Mocha tests
+export default app;

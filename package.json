@@ -1,16 +1,22 @@
 {
 	"name": "dog-adoption-platform-api",
 	"version": "1.0.0",
+	"type":"module",
 	"description": "Dog Adoption Platform API",
 	"main": "app.js",
 	"scripts": {
-		"start": "node app.js",
-		"dev": "nodemon app.js"
-	},
+  "start": "node app.js",
+  "dev": "nodemon app.js",
+"test": "cross-env NODE_ENV=test mocha './test/**/*.js' --require dotenv/config --timeout 10000 --reporter spec"
+},
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
-		"nodemon": "^3.1.10"
+		"chai": "^6.2.0",
+		"chai-http": "^5.1.2",
+		"mocha": "^11.7.4",
+		"nodemon": "^3.1.10",
+		"supertest": "^7.1.4"
 	},
 	"dependencies": {
 		"bcryptjs": "^3.0.2",

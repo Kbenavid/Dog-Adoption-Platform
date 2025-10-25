@@ -1,21 +1,20 @@
-// routes/dogs.routes.js
-import { Router } from "express";
-import { authRequired } from "../middlewares/auth.js";
+import express from "express";
 import {
   registerDog,
   adoptDog,
   removeDog,
   listMyRegisteredDogs,
-  listMyAdoptedDogs,
+  listMyAdoptedDogs
 } from "../controllers/dogs.controller.js";
+import { authenticate } from "../middlewares/authMiddleware.js";
 
-const router = Router();
+const router = express.Router();
 
-// Dog management routes
-router.post("/", authRequired, registerDog);             // Register new dog
-router.post("/:id/adopt", authRequired, adoptDog);       // Adopt a dog
-router.delete("/:id", authRequired, removeDog);          // Remove your dog
-router.get("/registered", authRequired, listMyRegisteredDogs); // List your registered dogs
-router.get("/adopted", authRequired, listMyAdoptedDogs);       // List your adopted dogs
+// 🐾 Protected routes
+router.post("/", authenticate, registerDog);
+router.post("/:id/adopt", authenticate, adoptDog);
+router.delete("/:id", authenticate, removeDog);
+router.get("/my-registered", authenticate, listMyRegisteredDogs);
+router.get("/my-adopted", authenticate, listMyAdoptedDogs);
 
 export default router;

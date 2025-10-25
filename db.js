@@ -1,17 +1,19 @@
-import mongoose from 'mongoose';
-export async function connectDB() {
-    try {
-        const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/mydatabase';
-        if (mongoUri) {
-            throw new Error('MONGODB_URI is not defined in your .env file');
-        }
+import mongoose from "mongoose";
 
-        await mongoose.connect(mongoUri, { useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-        console.log ('Connected to MongoDB successfully');
-    } catch (err) {
-        console.error('Error connecting to MongoDB:', err.message);
-        process.exit(1);
-    }
-}   
+export async function connectDB() {
+  try {
+    const uri =
+      process.env.NODE_ENV === "test"
+        ? process.env.MONGODB_TEST_URI
+        : process.env.MONGODB_URI;
+
+    if (!uri) throw new Error("MongoDB URI not found in environment variables");
+
+    await mongoose.connect(uri);
+    console.log(`✅ Connected to MongoDB (${process.env.NODE_ENV} mode)`);
+
+  } catch (err) {
+    console.error("❌ Error connecting to MongoDB:", err.message);
+    process.exit(1);
+  }
+}
