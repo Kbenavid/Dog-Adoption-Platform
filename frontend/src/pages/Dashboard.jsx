@@ -1,85 +1,42 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import "../styles/Dashboard.css";
 
 export default function Dashboard() {
-  const [dogs, setDogs] = useState([]);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [message, setMessage] = useState("");
-
-  const token = localStorage.getItem("token");
-
-  // Fetch dogs the user registered
-  const fetchDogs = async () => {
-    try {
-      const res = await api.get("/dogs/my-registered", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setDogs(res.data.items || []);
-    } catch (err) {
-      console.error(err);
-      setMessage("⚠️ Failed to load dogs");
-    }
-  };
-
-  // Register a new dog
-  const handleAddDog = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await api.post(
-        "/dogs",
-        { name, description },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setMessage(`✅ ${res.data.name} registered!`);
-      setName("");
-      setDescription("");
-      fetchDogs();
-    } catch (err) {
-      setMessage(err.response?.data?.error || "Error registering dog");
-    }
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) fetchDogs();
-  }, []);
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
-    <div style={{ maxWidth: "600px", margin: "2rem auto" }}>
-      <h2>🐾 Dashboard</h2>
-      {message && <p>{message}</p>}
+    <div className="dashboard-container">
+      <h1 className="dashboard-heading">🐾 Dog Adoption Dashboard</h1>
+      <p className="dashboard-subtext">Welcome! Choose an action below:</p>
 
-      {!token ? (
-        <p>⚠️ Please log in to view your dogs.</p>
-      ) : (
-        <>
-          <form onSubmit={handleAddDog}>
-            <input
-              type="text"
-              placeholder="Dog name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            /><br/>
-            <input
-              type="text"
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            /><br/>
-            <button type="submit">Add Dog</button>
-          </form>
+      <div className="dashboard-buttons">
+        <button className="dashboard-btn" onClick={() => navigate("/register-dog")}>
+          ➕ Register New Dog
+        </button>
 
-          <h3 style={{ marginTop: "2rem" }}>My Registered Dogs</h3>
-          <ul>
-            {dogs.map((dog) => (
-              <li key={dog._id}>
-                🐶 {dog.name} — {dog.status}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+        <button className="dashboard-btn" onClick={() => navigate("/my-dogs")}>
+          📋 View My Registered Dogs
+        </button>
+
+        <button className="dashboard-btn" onClick={() => navigate("/my-adopted")}>
+          ❤️ View My Adopted Dogs
+        </button>
+
+        <button className="dashboard-btn logout-btn" onClick={handleLogout}>
+          🚪 Logout
+        </button>
+      </div>
     </div>
   );
 }

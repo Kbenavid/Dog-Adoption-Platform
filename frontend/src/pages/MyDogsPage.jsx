@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import Card from "../components/Card";
-import "../styles/AllDogsPage.css";
+import "../styles/MyDogsPage.css";
 
-export default function AllDogsPage() {
+export default function MyDogsPage() {
   const [dogs, setDogs] = useState([]);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
 
-  // Fetch registered dogs (for now — later you can switch to a /dogs route)
-  const fetchDogs = async () => {
+  const fetchMyDogs = async () => {
     try {
       const res = await api.get("/dogs/my-registered", {
         headers: { Authorization: `Bearer ${token}` },
@@ -17,41 +16,38 @@ export default function AllDogsPage() {
       setDogs(res.data.items || []);
     } catch (err) {
       console.error(err);
-      setMessage("⚠️ Failed to fetch dogs");
+      setMessage("⚠️ Failed to load your registered dogs.");
     }
   };
 
-  // Handle adoption
-  const handleAdopt = async (id) => {
+  const handleRemove = async (id) => {
     try {
-      const res = await api.post(
-        `/dogs/${id}/adopt`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setMessage(`🎉 You adopted ${res.data.name}!`);
-      fetchDogs(); // Refresh list
+      await api.delete(`/dogs/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMessage("🗑️ Dog removed successfully.");
+      fetchMyDogs();
     } catch (err) {
       console.error(err);
-      setMessage(err.response?.data?.error || "Error adopting dog");
+      setMessage(err.response?.data?.error || "Error removing dog");
     }
   };
 
   useEffect(() => {
-    fetchDogs();
+    fetchMyDogs();
   }, []);
 
   return (
     <div className="page-container">
-      <h2>🐾 Available Dogs for Adoption</h2>
+      <h2>🐕 My Registered Dogs</h2>
       {message && <p className="message">{message}</p>}
 
       {!token ? (
-        <p className="login-warning">⚠️ Please log in to adopt dogs.</p>
+        <p className="login-warning">⚠️ Please log in to view your dogs.</p>
       ) : (
         <div className="card-grid">
           {dogs.length === 0 ? (
-            <p>No dogs available for adoption right now.</p>
+            <p>You haven’t registered any dogs yet.</p>
           ) : (
             dogs.map((dog) => (
               <Card
@@ -59,11 +55,11 @@ export default function AllDogsPage() {
                 title={dog.name}
                 description={`Status: ${dog.status}`}
                 buttonLabel={
-                  dog.status === "available" ? "Adopt ❤️" : "Adopted 🐕"
+                  dog.status === "available" ? "Remove ❌" : "Adopted 🐾"
                 }
                 onButtonClick={
                   dog.status === "available"
-                    ? () => handleAdopt(dog._id)
+                    ? () => handleRemove(dog._id)
                     : null
                 }
               />

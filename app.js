@@ -28,7 +28,7 @@ connectDB()
   .catch(err => console.error("❌ connectDB() error:", err.message));
 
 // 🟣 --- Server Setup ---
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5001;
 
 // ✅ Only start the server if NOT in test mode
 if (process.env.NODE_ENV !== "test") {

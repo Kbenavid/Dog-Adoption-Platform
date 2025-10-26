@@ -1,0 +1,35 @@
+.page-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+  
+  h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+  }
+  
+  .message {
+    text-align: center;
+    background-color: #e8f4ea;
+    border: 1px solid #a3d9a5;
+    padding: 0.8rem;
+    border-radius: 8px;
+    color: #2e7d32;
+  }
+  
+  .login-warning {
+    text-align: center;
+    color: #b71c1c;
+    background-color: #ffebee;
+    padding: 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+  
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
